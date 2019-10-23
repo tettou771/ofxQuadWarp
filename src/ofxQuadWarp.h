@@ -8,6 +8,7 @@
 
 #include "ofMain.h"
 #include "ofxOpenCv.h"
+#include "calib3d_c.h"
 
 class ofxQuadWarp 
 {
