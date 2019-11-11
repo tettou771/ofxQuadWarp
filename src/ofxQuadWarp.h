@@ -89,4 +89,5 @@ protected:
     bool bMouseEnabled;
     bool bKeyboardShortcuts;
     bool bShow;
+	bool bMove;
 };

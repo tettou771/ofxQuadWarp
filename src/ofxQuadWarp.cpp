@@ -14,6 +14,7 @@ ofxQuadWarp::ofxQuadWarp() {
     bMouseEnabled = false;
     bKeyboardShortcuts = false;
     bShow = false;
+	bMove = false;
 }
 
 ofxQuadWarp::~ofxQuadWarp() {
@@ -74,6 +75,7 @@ void ofxQuadWarp::disableMouseControls() {
         return;
     }
 	selectedCornerIndex = -1;
+	bMove = false;
 }
 
 void ofxQuadWarp::enableKeyboardShortcuts() {
@@ -282,19 +284,44 @@ void ofxQuadWarp::onMousePressed(ofMouseEventArgs& mouseArgs) {
 		}
 	}
     selectedCornerIndex = -1;
+
+	auto isPointInTriangle = [](ofPoint& p, ofPoint& a, ofPoint& b, ofPoint& c) {
+		bool bA = (p.x - a.x) * (b.y - a.y) - (b.x - a.x) * (p.y - a.y) < 0; // z of (p - a) x (b - a)
+		bool bB = (p.x - b.x) * (c.y - b.y) - (c.x - b.x) * (p.y - b.y) < 0; // z of (p - b) x (c - b)
+		bool bC = (p.x - c.x) * (a.y - c.y) - (a.x - c.x) * (p.y - c.y) < 0; // z of (p - c) x (a - c)
+		return bA == bB && bB == bC;
+	};
+
+	// if in the warper clicked, then move start
+	bool inTheWarper = false;
+	ofPoint m(mouseArgs.x, mouseArgs.y);
+	for (int i = 0; i < 4; i += 2) {
+		int j = (i + 1) % 4;
+		int k = (i + 2) % 4;
+		if (isPointInTriangle(m, dstPoints[i], dstPoints[j], dstPoints[k])) {
+			inTheWarper = true;
+			break;
+		}
+	}
+	bMove = inTheWarper;
 }
 
 void ofxQuadWarp::onMouseDragged(ofMouseEventArgs& mouseArgs) {
     if(bShow == false) {
         return;
     }
-    if(selectedCornerIndex < 0 || selectedCornerIndex > 3) {
-        return;
-    }
+    if(0 <= selectedCornerIndex && selectedCornerIndex < 4) {
+		ofPoint mousePoint(mouseArgs.x, mouseArgs.y);
+		mousePoint -= position;
+		dstPoints[selectedCornerIndex].set(mousePoint);
+	}
+	else if (bMove) {
+		ofVec2f moved(mouseArgs.x - ofGetPreviousMouseX(), mouseArgs.y - ofGetPreviousMouseY());
+		for (int i = 0; i < 4; ++i) {
+			dstPoints[i].set(dstPoints[i] + moved);
+		}
+	}
     
-    ofPoint mousePoint(mouseArgs.x, mouseArgs.y);
-    mousePoint -= position;
-	dstPoints[selectedCornerIndex].set(mousePoint);
 }
 
 void ofxQuadWarp::onMouseReleased(ofMouseEventArgs& mouseArgs) {
@@ -308,6 +335,7 @@ void ofxQuadWarp::onMouseReleased(ofMouseEventArgs& mouseArgs) {
     ofPoint mousePoint(mouseArgs.x, mouseArgs.y);
     mousePoint -= position;
 	dstPoints[selectedCornerIndex].set(mousePoint);
+	bMove = false;
 }
 
 void ofxQuadWarp::keyPressed(ofKeyEventArgs& keyArgs) {
