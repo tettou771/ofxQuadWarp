@@ -310,15 +310,30 @@ void ofxQuadWarp::onMouseDragged(ofMouseEventArgs& mouseArgs) {
     if(bShow == false) {
         return;
     }
-    if(0 <= selectedCornerIndex && selectedCornerIndex < 4) {
-		ofPoint mousePoint(mouseArgs.x, mouseArgs.y);
-		mousePoint -= position;
-		dstPoints[selectedCornerIndex].set(mousePoint);
+
+	ofVec2f moved(mouseArgs.x - ofGetPreviousMouseX(), mouseArgs.y - ofGetPreviousMouseY());
+	auto movePoint = [=](int index) {
+		dstPoints[index].set(dstPoints[index] + moved);
+	};
+
+	if(0 <= selectedCornerIndex && selectedCornerIndex < 4) {
+		movePoint(selectedCornerIndex);
+		if (ofGetKeyPressed(OF_KEY_SHIFT)) {
+			switch (selectedCornerIndex) {
+			case 0: case 2:
+				dstPoints[3].set(dstPoints[0].x, dstPoints[2].y);
+				dstPoints[1].set(dstPoints[2].x, dstPoints[0].y);
+				break;
+			case 1: case 3:
+				dstPoints[0].set(dstPoints[3].x, dstPoints[1].y);
+				dstPoints[2].set(dstPoints[1].x, dstPoints[3].y);
+				break;
+			}
+		}
 	}
 	else if (bMove) {
-		ofVec2f moved(mouseArgs.x - ofGetPreviousMouseX(), mouseArgs.y - ofGetPreviousMouseY());
 		for (int i = 0; i < 4; ++i) {
-			dstPoints[i].set(dstPoints[i] + moved);
+			movePoint(i);
 		}
 	}
     
