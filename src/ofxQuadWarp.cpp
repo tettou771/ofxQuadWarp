@@ -318,15 +318,39 @@ void ofxQuadWarp::onMouseDragged(ofMouseEventArgs& mouseArgs) {
 
 	if(0 <= selectedCornerIndex && selectedCornerIndex < 4) {
 		movePoint(selectedCornerIndex);
+
+		// if shift key pressed, then rectangle transform
 		if (ofGetKeyPressed(OF_KEY_SHIFT)) {
+			ofPoint a, b;
+
 			switch (selectedCornerIndex) {
 			case 0: case 2:
-				dstPoints[3].set(dstPoints[0].x, dstPoints[2].y);
-				dstPoints[1].set(dstPoints[2].x, dstPoints[0].y);
+				a.set(dstPoints[0].x, dstPoints[2].y);
+				b.set(dstPoints[2].x, dstPoints[0].y);
+
+				// compatible to flip/rotate
+				if ((dstPoints[3] - a).lengthSquared() <= (dstPoints[1] - a).lengthSquared()) {
+					dstPoints[3].set(a);
+					dstPoints[1].set(b);
+				}
+				else {
+					dstPoints[3].set(b);
+					dstPoints[1].set(a);
+				}
 				break;
 			case 1: case 3:
-				dstPoints[0].set(dstPoints[3].x, dstPoints[1].y);
-				dstPoints[2].set(dstPoints[1].x, dstPoints[3].y);
+				a.set(dstPoints[3].x, dstPoints[1].y);
+				b.set(dstPoints[1].x, dstPoints[3].y);
+
+				// compatible to flip/rotate
+				if ((dstPoints[0] - a).lengthSquared() <= (dstPoints[2] - a).lengthSquared()) {
+					dstPoints[0].set(a);
+					dstPoints[2].set(b);
+				}
+				else {
+					dstPoints[0].set(b);
+					dstPoints[2].set(a);
+				}
 				break;
 			}
 		}
