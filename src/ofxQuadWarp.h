@@ -28,7 +28,8 @@ public:
     void setTargetRect(const ofRectangle& rect);
     void setTargetPoints(const vector<ofPoint>& points);
     ofPoint* getTargetPoints();
-    
+	ofPoint getCenter();
+
     OF_DEPRECATED_MSG("Use enableMouseControls() and enableKeyboardShortcuts() instead.", void enable());
     OF_DEPRECATED_MSG("Use disableMouseControls() and disableKeyboardShortcuts() instead.", void disable());
     
@@ -67,6 +68,7 @@ public:
     void drawHighlightedCorner();
     void drawSelectedCorner();
     void drawCornerAt(const ofPoint& point);
+	void drawRotateHandle();
     
     ofPoint srcPoints[4];
     ofPoint dstPoints[4];
@@ -90,4 +92,10 @@ protected:
     bool bKeyboardShortcuts;
     bool bShow;
 	bool bMove;
+	bool bRotate;
+	ofPoint rotateBeginDstPoints[4];
+	ofPoint rotateBeginMousePosition, rotateBeginCenter;
+
+	static const ofKey rectmodeModifireKey = OF_KEY_SHIFT;
+	static const ofKey rotateModifireKey = OF_KEY_ALT;
 };
