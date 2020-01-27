@@ -277,6 +277,7 @@ void ofxQuadWarp::onMousePressed(ofMouseEventArgs& mouseArgs) {
 
 	// rotate
 	if (ofGetKeyPressed(rotateModifireKey)) {
+		selectedCornerIndex = -1;
 		memcpy(rotateBeginDstPoints, dstPoints, sizeof(ofPoint) * 4);
 		rotateBeginMousePosition.set(mouseArgs.x, mouseArgs.y);
 		rotateBeginCenter.set(getCenter());
