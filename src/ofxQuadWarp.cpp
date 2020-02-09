@@ -139,6 +139,17 @@ ofPoint ofxQuadWarp::getCenter() {
 	return (dstPoints[0] + dstPoints[1] + dstPoints[2] + dstPoints[3]) / 4;
 }
 
+ofPoint* ofxQuadWarp::getSelectedPoint() {
+	if (bShow == false || ofGetKeyPressed(rotateModifireKey)) {
+		return nullptr;
+	}
+	if (selectedCornerIndex < 0 || selectedCornerIndex > 3) {
+		return nullptr;
+	}
+
+	return &dstPoints[selectedCornerIndex];
+}
+
 //----------------------------------------------------- matrix.
 ofMatrix4x4 ofxQuadWarp::getMatrix() const {
 	return getMatrix(&srcPoints[0], &dstPoints[0]);

@@ -29,6 +29,7 @@ public:
     void setTargetPoints(const vector<ofPoint>& points);
     ofPoint* getTargetPoints();
 	ofPoint getCenter();
+    ofPoint* getSelectedPoint();
 
     OF_DEPRECATED_MSG("Use enableMouseControls() and enableKeyboardShortcuts() instead.", void enable());
     OF_DEPRECATED_MSG("Use disableMouseControls() and disableKeyboardShortcuts() instead.", void disable());
