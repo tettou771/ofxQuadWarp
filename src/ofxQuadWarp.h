@@ -35,10 +35,10 @@ public:
     OF_DEPRECATED_MSG("Use disableMouseControls() and disableKeyboardShortcuts() instead.", void disable());
     
     void enableMouseControls();
-    void disableMouseControls();
+    void disableMouseControls(bool disableSelection = true);
     
     void enableKeyboardShortcuts();
-    void disableKeyboardShortcuts();
+    void disableKeyboardShortcuts(bool disableSelection = true);
     
     void update();
     void reset();
@@ -54,6 +54,7 @@ public:
     void setBottomRightCornerPosition(const ofPoint& p);
     void setBottomLeftCornerPosition(const ofPoint& p);
     bool isCornerSelected(int cornerIndex) { return selectedCornerIndex == cornerIndex; }
+    void rectangulize();
 
     void show();
     void hide();
@@ -81,7 +82,7 @@ protected:
     void onMouseDragged(ofMouseEventArgs & mouseArgs);
     void onMouseReleased(ofMouseEventArgs & mouseArgs);
     void keyPressed(ofKeyEventArgs & keyArgs);
-    
+
     ofPoint position;
     
 	float anchorSize;

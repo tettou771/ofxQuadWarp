@@ -58,7 +58,7 @@ void ofxQuadWarp::enableMouseControls() {
 	ofAddListener(ofEvents().mouseReleased, this, &ofxQuadWarp::onMouseReleased);
 }
 
-void ofxQuadWarp::disableMouseControls() {
+void ofxQuadWarp::disableMouseControls(bool disableSelection) {
 	if (bMouseEnabled == false) {
 		return;
 	}
@@ -72,8 +72,11 @@ void ofxQuadWarp::disableMouseControls() {
 	catch (exception e) {
 		return;
 	}
-	selectedCornerIndex = -1;
 	bMove = false;
+
+	if (disableSelection) {
+		selectedCornerIndex = -1;
+	}
 }
 
 void ofxQuadWarp::enableKeyboardShortcuts() {
@@ -84,7 +87,7 @@ void ofxQuadWarp::enableKeyboardShortcuts() {
 	ofAddListener(ofEvents().keyPressed, this, &ofxQuadWarp::keyPressed);
 }
 
-void ofxQuadWarp::disableKeyboardShortcuts() {
+void ofxQuadWarp::disableKeyboardShortcuts(bool disableSelection) {
 	if (bKeyboardShortcuts == false) {
 		return;
 	}
@@ -95,7 +98,10 @@ void ofxQuadWarp::disableKeyboardShortcuts() {
 	catch (exception e) {
 		return;
 	}
-	selectedCornerIndex = -1;
+
+	if (disableSelection) {
+		selectedCornerIndex = -1;
+	}
 }
 
 //----------------------------------------------------- source / target points.
@@ -377,38 +383,7 @@ void ofxQuadWarp::onMouseDragged(ofMouseEventArgs& mouseArgs) {
 
 		// if shift key pressed, then rectangle transform
 		if (ofGetKeyPressed(rectmodeModifireKey)) {
-			ofPoint a, b;
-
-			switch (selectedCornerIndex) {
-			case 0: case 2:
-				a.set(dstPoints[0].x, dstPoints[2].y);
-				b.set(dstPoints[2].x, dstPoints[0].y);
-
-				// compatible to flip/rotate
-				if ((dstPoints[3] - a).lengthSquared() <= (dstPoints[1] - a).lengthSquared()) {
-					dstPoints[3].set(a);
-					dstPoints[1].set(b);
-				}
-				else {
-					dstPoints[3].set(b);
-					dstPoints[1].set(a);
-				}
-				break;
-			case 1: case 3:
-				a.set(dstPoints[3].x, dstPoints[1].y);
-				b.set(dstPoints[1].x, dstPoints[3].y);
-
-				// compatible to flip/rotate
-				if ((dstPoints[0] - a).lengthSquared() <= (dstPoints[2] - a).lengthSquared()) {
-					dstPoints[0].set(a);
-					dstPoints[2].set(b);
-				}
-				else {
-					dstPoints[0].set(b);
-					dstPoints[2].set(a);
-				}
-				break;
-			}
+			rectangulize();
 		}
 	}
 	else if (bMove) {
@@ -509,6 +484,41 @@ void ofxQuadWarp::setBottomRightCornerPosition(const ofPoint& p) {
 
 void ofxQuadWarp::setBottomLeftCornerPosition(const ofPoint& p) {
 	setCorner(p, 3);
+}
+
+void ofxQuadWarp::rectangulize() {
+	ofPoint a, b;
+
+	switch (selectedCornerIndex) {
+	case 0: case 2:
+		a.set(dstPoints[0].x, dstPoints[2].y);
+		b.set(dstPoints[2].x, dstPoints[0].y);
+
+		// compatible to flip/rotate
+		if ((dstPoints[3] - a).lengthSquared() <= (dstPoints[1] - a).lengthSquared()) {
+			dstPoints[3].set(a);
+			dstPoints[1].set(b);
+		}
+		else {
+			dstPoints[3].set(b);
+			dstPoints[1].set(a);
+		}
+		break;
+	case 1: case 3:
+		a.set(dstPoints[3].x, dstPoints[1].y);
+		b.set(dstPoints[1].x, dstPoints[3].y);
+
+		// compatible to flip/rotate
+		if ((dstPoints[0] - a).lengthSquared() <= (dstPoints[2] - a).lengthSquared()) {
+			dstPoints[0].set(a);
+			dstPoints[2].set(b);
+		}
+		else {
+			dstPoints[0].set(b);
+			dstPoints[2].set(a);
+		}
+		break;
+	}
 }
 
 //----------------------------------------------------- show / hide.
